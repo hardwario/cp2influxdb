@@ -56,8 +56,7 @@ def server(config):
     context = zmq.Context()
     sock = context.socket(zmq.SUB)
     sock.setsockopt_string(zmq.SUBSCRIBE, '')
-    sock.connect('tcp://%s:%d' %
-        (config['zmq']['host'], config['zmq']['port']))
+    sock.connect('tcp://%s:%d' % (config['zmq']['host'], config['zmq']['port']))
     try:
         db = influxdb.InfluxDBClient(
             host=config['influxdb']['host'],
