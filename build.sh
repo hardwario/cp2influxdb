@@ -49,12 +49,15 @@ if [ -z "${TRAVIS_BUILD_DIR:-}" ]; then
     mkdir -p "$BUILD_DIR"
     cp -r cp2influxdb "$BUILD_DIR"/cp2influxdb
     cp setup.py "$BUILD_DIR"/
+    cp requirements.txt "$BUILD_DIR"/
+    cp LICENSE "$BUILD_DIR"/
+    cp *.md "$BUILD_DIR"/
     cd "$BUILD_DIR"
 fi
 
 ls -lha
 
-set_version cp2influxdb/app.py
+set_version cp2influxdb/__init__.py
 set_version setup.py
 
 python3 setup.py sdist
