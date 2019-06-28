@@ -1,5 +1,6 @@
-click==7.0
-influxdb==5.2.1
-PyYAML==3.13
-pyzmq==17.1.2
-schema==0.6.8
+Click>=7.0
+click-log>=0.2.1
+influxdb>=5.2.1
+PyYAML>=5.1
+pyzmq>=17.1.2
+schema>=0.6.8
