@@ -1,6 +1,5 @@
 import pip
 import setuptools
-import cp2influxdb as target
 
 with open('requirements.txt', 'r') as f:
     requirements = f.read()
@@ -9,11 +8,11 @@ with open('README.md', 'r') as f:
     long_description = f.read()
 
 setuptools.setup(
-    name=target.__name__,
-    version=target.__version__,
+    name='cp2influxdb',
+    version='@@VERSION@@',
     author='HARDWARIO s.r.o.',
     author_email='ask@hardwario.com',
-    description=target.__doc__,
+    description="COOPER to InfluxDB",
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/hardwario/cp2influxdb',
@@ -32,9 +31,8 @@ setuptools.setup(
     platforms='any',
     packages=setuptools.find_packages(),
     install_requires=requirements,
-    entry_points={
-        'console_scripts': [
-            '%s=%s:main' % (target.__name__, target.__name__)
-        ]
-    }
+    entry_points='''
+        [console_scripts]
+        cp2influxdb=cp2influxdb:main
+    '''
 )
