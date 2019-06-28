@@ -1,6 +1,7 @@
 'COOPER to InfluxDB'
 
 import click
+import click_log
 import datetime
 import influxdb
 import json
@@ -14,18 +15,18 @@ __version__ = '@@VERSION@@'
 
 MEASUREMENTS = [
     'altitude',
-    'co2-conc',
+    'co2_conc',
     'humidity',
     'illuminance',
-    'motion-count',
+    'motion_count',
     'orientation',
-    'press-count',
+    'press_count',
     'pressure',
     'rssi',
     'sequence',
-    'sound-level',
+    'sound_level',
     'temperature',
-    'voc-conc',
+    'voc_conc',
     'voltage',
 ]
 
@@ -34,6 +35,7 @@ MEASUREMENTS = [
 @click.option('--config', '-c', 'config_file', type=click.File('r'),
               required=True, help='Configuration file.')
 @click.option('--test', is_flag=True, help='Test configuration file.')
+@click_log.simple_verbosity_option(default='INFO')
 @click.version_option(version=__version__)
 def main(config_file, test=False):
     try:
@@ -73,19 +75,40 @@ def server(config):
             message = sock.recv_json()
             time = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
             points = []
-            for k, v in message.items():
-                if k in MEASUREMENTS and v is not None:
-                    points.append({
-                        'measurement': k,
-                        'time': time,
-                        'tags': {
-                            'id': message['id'],
-                            'gw': message['gw'],
-                        },
-                        'fields': {
-                            'value': v
-                        }
-                    })
+
+            mtype = message.get('type', 'beacon')
+
+            if mtype == 'beacon':
+                for k, v in message.items():
+                    if k in MEASUREMENTS and v is not None:
+                        points.append({
+                            'measurement': k,
+                            'time': time,
+                            'tags': {
+                                'id': message['id'],
+                                'gw': message['gw'],
+                            },
+                            'fields': {
+                                'value': v
+                            }
+                        })
+            elif mtype == 'sound':
+                points.append({
+                    'measurement': 'sound',
+                    'time': time,
+                    'tags': {
+                        'id': message['id'],
+                        'gw': message['gw'],
+                    },
+                    'fields': {
+                        'min': message['min'],
+                        'max': message['max'],
+                    }
+                })
+            else:
+                logging.error('Unknown message type: %s' % mtype)
+                return
+
             db.write_points(points)
         except zmq.error.Again as e:
             logging.error('ZeroMQ error: %s' % e)
