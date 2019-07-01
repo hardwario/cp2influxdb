@@ -24,11 +24,13 @@ cp2influxdb -c config.yml
 
 ### Systemd
 
-Insert this snippet to the file /lib/systemd/system/cp2influxdb.service:
+Insert this snippet to the file /etc/systemd/system/cp2influxdb.service:
+
 ```
 [Unit]
 Description=COOPER cp2influxdb
 After=network.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -36,7 +38,6 @@ User=pi
 ExecStart=/usr/local/bin/cp2influxdb -c /etc/cooper/cp2influxdb.yml
 Restart=always
 RestartSec=5
-StartLimitIntervalSec=0
 
 [Install]
 WantedBy=multi-user.target
